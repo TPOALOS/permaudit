@@ -136,6 +136,19 @@ class NewFeatureTests(unittest.TestCase):
         self.assertEqual(permaudit.fix_command("/x", "world-writable-file"), "chmod o-w /x")
         self.assertIsNone(permaudit.fix_command("/x", "unknown-rule"))
 
+    def test_control_characters_in_names_never_split_a_pasted_command(self):
+        for name in ("evil\nrm -rf ~\n.env", "tab\tname", "cr\rname", "bell\x07"):
+            cmd = permaudit.fix_command("/srv/" + name, "readable-env-file")
+            self.assertEqual(cmd, "chmod 600 'FILE-NAME-HAS-CONTROL-CHARACTERS'", repr(name))
+            self.assertEqual(len(cmd.splitlines()), 1)
+
+    def test_json_fix_is_single_line_for_hostile_names(self):
+        touch(self.root, "bad\nrm -rf ~/.env", 0o644)
+        data = json.loads(run_main(self.root, "--json")[1])
+        self.assertTrue(data)
+        for item in data:
+            self.assertEqual(len(item["fix"].splitlines()), 1)
+
     def test_every_rule_has_a_fix(self):
         for rule in ("world-writable-file", "world-writable-dir", "loose-private-key", "loose-ssh-dir",
                      "readable-env-file", "loose-secret-file", "suid", "sgid"):

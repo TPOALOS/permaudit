@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "permaudit"
-version = "1.1.0"
+version = "1.1.1"
 description = "Read-only file permission auditor: world-writable, SUID, loose keys, .env and credential files. Suggests chmod fixes, JSON output."
 readme = "README.md"
 requires-python = ">=3.9"

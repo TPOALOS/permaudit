@@ -13,7 +13,7 @@ import shlex
 import stat
 import sys
 
-__version__ = "1.1.0"
+__version__ = "1.1.1"
 
 PRIVATE_KEY_NAMES = ("id_rsa", "id_dsa", "id_ecdsa", "id_ed25519")
 SKIP_DIRS = {".git", "node_modules", "__pycache__"}
@@ -99,11 +99,19 @@ def audit(root, exclude=()):
             yield path, sev, rule, msg
 
 
+def safe_quote(path):
+    """Shell-quote ``path``. A name with a newline or other control character could split a pasted command into two,
+    so such names get a harmless placeholder instead."""
+    if any(ord(c) < 32 or ord(c) == 127 for c in path):
+        return "'FILE-NAME-HAS-CONTROL-CHARACTERS'"
+    return shlex.quote(path)
+
+
 def fix_command(path, rule):
     """Shell-quoted chmod suggestion for a finding, or None."""
     if rule not in FIXES:
         return None
-    return "chmod %s %s" % (FIXES[rule][0], shlex.quote(path))
+    return "chmod %s %s" % (FIXES[rule][0], safe_quote(path))
 
 
 def main(argv=None):
