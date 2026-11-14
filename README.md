@@ -48,3 +48,7 @@ python3 -m unittest -v
 ## License
 
 MIT (c) TPOALOS
+
+---
+
+**More tools by [TPOALOS](https://github.com/TPOALOS):** [headercheck](https://github.com/TPOALOS/headercheck) · [jwtlint](https://github.com/TPOALOS/jwtlint) · [mailtriage](https://github.com/TPOALOS/mailtriage) · [all 51 tools](https://tpoalos.github.io)
